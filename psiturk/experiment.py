@@ -86,6 +86,17 @@ except ImportError as e:
 else:
     app.register_blueprint(custom_code)
 
+socket = None
+try:
+    sys.path.append(os.getcwd())
+    from custom import socketio
+except ImportError as e:
+        app.logger.error("There is socketio in (custom.py) associated with this \
+                          project but it doesn't import cleanly.  Raising exception,")
+        raise
+else:
+    socket = socketio
+
 init_db()
 
 
@@ -731,7 +742,11 @@ def run_webserver():
     host = "0.0.0.0"
     port = CONFIG.getint('Server Parameters', 'port')
     print "Serving on ", "http://" +  host + ":" + str(port)
-    app.run(debug=True, host=host, port=port)
+
+    if socket is not None:
+        socket.run(app, debug=True, host=host, port=port)
+    else:
+        app.run(debug=True, host=host, port=port)
 
 if __name__ == '__main__':
     run_webserver()
