@@ -86,6 +86,15 @@ except ImportError as e:
 else:
     app.register_blueprint(custom_code)
 
+try:
+    from custom import get_socketio
+except ImportError as e:
+    app.logger.error("Problem importing socket (custom.py::sio)")
+else:
+    print("Successfully injected flask-socketio middleware into psiturk app")
+    app.wsgi_app = sio.Middleware(sio, app.wsgi_app)
+
+
 init_db()
 
 

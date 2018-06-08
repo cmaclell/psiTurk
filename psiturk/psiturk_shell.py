@@ -35,6 +35,7 @@ import experiment_server_controller as control
 from db import db_session, init_db
 from models import Participant
 
+version_number += "-socketio"
 
 def colorize(target, color, use_escape=True):
     ''' Colorize target string. Set use_escape to false when text will not be
