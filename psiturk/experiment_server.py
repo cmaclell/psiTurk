@@ -52,6 +52,7 @@ class ExperimentServer(Application):
         if workers == "auto":
             workers = str(multiprocessing.cpu_count() * 2 + 1)
 
+        
         self.loglevels = ["debug", "info", "warning", "error", "critical"]
 
         def on_exit(server):
@@ -69,7 +70,8 @@ class ExperimentServer(Application):
         project_hash = hashlib.sha1(os.getcwd()).hexdigest()[:12]
         self.user_options = {
             'bind': config.get("Server Parameters", "host") + ":" + config.get("Server Parameters", "port"),
-            'workers': workers,
+            'workers': '1', #workers, self.cfg.set()
+            'worker_class': 'eventlet',
             'loglevels': self.loglevels,
             'loglevel': self.loglevels[config.getint("Server Parameters", "loglevel")],
             # 'accesslog': config.get("Server Parameters", "logfile"),
@@ -78,6 +80,8 @@ class ExperimentServer(Application):
             'limit_request_line': '0',
             'on_exit': on_exit
         }
+
+
 
         if config.has_option("Server Parameters", "certfile") and config.has_option("Server Parameters", "keyfile"):
             print "Loading SSL certs for server..."
