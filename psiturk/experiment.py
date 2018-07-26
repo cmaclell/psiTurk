@@ -11,6 +11,7 @@ import string
 import requests
 import re
 import json
+import socketio
 
 try:
     from collections import Counter
@@ -29,6 +30,8 @@ from sqlalchemy import or_, exc
 from psiturk_config import PsiturkConfig
 from experiment_errors import ExperimentError, InvalidUsage
 from psiturk.user_utils import nocache
+
+
 
 # Setup config
 CONFIG = PsiturkConfig()
@@ -82,18 +85,21 @@ except ImportError as e:
     else:
         app.logger.error("There is custom code (custom.py) associated with this \
                           project but it doesn't import cleanly.  Raising exception,")
+        app.logger.error(e)
         raise
 else:
     app.register_blueprint(custom_code)
 
-try:
-    from custom import get_socketio
-except ImportError as e:
-    app.logger.error("Problem importing socket (custom.py::sio)")
-else:
-    print("Successfully injected flask-socketio middleware into psiturk app")
-    app.wsgi_app = sio.Middleware(sio, app.wsgi_app)
 
+try:
+    from custom import sio
+except ImportError as e:
+    app.logger.error("No socket found in custom code (custom.py::sio):")
+    app.logger.error(str(e))
+else:
+    app.wsgi_app = socketio.Middleware(sio, app.wsgi_app)
+    app.logger.info("Injected socketio middleware into psiturk flask app")
+    #print("experiment.py::101: Injected socketio middleware into psiturk flask app")
 
 init_db()
 

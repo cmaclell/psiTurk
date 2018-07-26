@@ -171,9 +171,9 @@ class ExperimentServerController:
         )
         server_status = self.is_server_running()
         if server_status == 'no':
-            #print "Running experiment server with command:", server_command
+            print "Running experiment server with command:", server_command
             subprocess.Popen(server_command, shell=True, close_fds=True)
-            print "Experiment server launching..."
+            print "Experiment server launching ..."
             self.server_running = True
         elif server_status == 'maybe':
             print "Error: Not sure what to tell you..."

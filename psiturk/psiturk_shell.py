@@ -34,8 +34,14 @@ from psiturk_config import PsiturkConfig
 import experiment_server_controller as control
 from db import db_session, init_db
 from models import Participant
+import os
+from datetime import time
+import time
 
-version_number += "-socketio"
+s1 = os.path.getmtime(__file__)
+s2 = time.time()
+version_number += "-socketio|modified:"+str((s2-s1)/60)+" m ago"
+
 
 def colorize(target, color, use_escape=True):
     ''' Colorize target string. Set use_escape to false when text will not be

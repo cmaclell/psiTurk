@@ -14,16 +14,18 @@ class ExperimentServer(Application):
     Custom Gunicorn Server Application that serves up the Experiment application
     '''
 
-    def __init__(self):
+    def __init__(self, main=False):
         '''__init__ method
         Load the base config and assign some core attributes.
         '''
-        self.load_user_config()
+
+        self.load_user_config(main)
         self.usage = None
         self.callable = None
         self.options = self.user_options
         self.prog = None
         self.do_load_config()
+        
         if 'OPENSHIFT_SECRET_TOKEN' in os.environ:
             my_ip = os.environ['OPENSHIFT_APP_DNS']
             print "Now serving on " + os.environ['OPENSHIFT_APP_DNS']
@@ -47,7 +49,7 @@ class ExperimentServer(Application):
         '''
         return util.import_app("psiturk.experiment:app")
 
-    def load_user_config(self):
+    def load_user_config(self, main=False):
         workers = config.get("Server Parameters", "threads")  # config calls these threads to avoid confusing with workers
         if workers == "auto":
             workers = str(multiprocessing.cpu_count() * 2 + 1)
@@ -68,6 +70,12 @@ class ExperimentServer(Application):
 
         # add unique identifier of this psiturk project folder
         project_hash = hashlib.sha1(os.getcwd()).hexdigest()[:12]
+    
+        if main:
+            errlog = '-'
+        else:
+            errlog = config.get("Server Parameters", "logfile")
+    
         self.user_options = {
             'bind': config.get("Server Parameters", "host") + ":" + config.get("Server Parameters", "port"),
             'workers': '1', #workers, self.cfg.set()
@@ -75,7 +83,7 @@ class ExperimentServer(Application):
             'loglevels': self.loglevels,
             'loglevel': self.loglevels[config.getint("Server Parameters", "loglevel")],
             # 'accesslog': config.get("Server Parameters", "logfile"),
-            'errorlog': config.get("Server Parameters", "logfile"),
+            'errorlog': errlog,
             'proc_name': 'psiturk_experiment_server_' + project_hash,
             'limit_request_line': '0',
             'on_exit': on_exit
@@ -99,8 +107,8 @@ class ExperimentServer(Application):
                 })
 
 
-def launch():
-    ExperimentServer().run()
+def launch(main=False):
+    ExperimentServer(main).run()
 
 if __name__ == "__main__":
-    launch()
+    launch(main=True)
