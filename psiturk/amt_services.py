@@ -97,10 +97,6 @@ class RDSServices(object):
         if not quiet:
             self.valid_login = self.verify_aws_login()
 
-        # if not self.valid_login:
-        #     print 'Sorry, AWS Credentials invalid.\nYou will only be able to
-        #     '\ + 'test experiments locally until you enter\nvalid '\ +
-        #     'credentials in the AWS Access section of config.txt.'
 
     def update_credentials(self, aws_access_key_id, aws_secret_access_key):
         ''' Update credentials '''
@@ -308,6 +304,11 @@ class MTurkServices(object):
     ''' MTurk services '''
     def __init__(self, aws_access_key_id, aws_secret_access_key, is_sandbox):
         self.update_credentials(aws_access_key_id, aws_secret_access_key)
+
+	print("attempting to connect to MTurk services with credentials: ")
+	print("id: " + str(aws_access_key_id))
+	print("key: " + str(aws_secret_access_key))
+
         self.set_sandbox(is_sandbox)
         self.valid_login = self.verify_aws_login()
 
@@ -520,7 +521,7 @@ class MTurkServices(object):
             try:
                 self.mtc.get_account_balance()
             except MTurkRequestError as exception:
-                print exception.error_message
+                print "MTurk request error: " + str(exception.error_message)
                 return False
             else:
                 return True

@@ -16,4 +16,5 @@ psutil>=1.2.1
 python-socketio
 Werkzeug==0.12.1
 ua-parser==0.3.6
+boto
 

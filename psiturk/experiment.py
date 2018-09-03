@@ -215,7 +215,9 @@ def check_worker_status():
         worker_id = request.args['workerId']
         assignment_id = request.args['assignmentId']
         allow_repeats = CONFIG.getboolean('HIT Configuration', 'allow_repeats')
-        if allow_repeats: # if you allow repeats focus on current worker/assignment combo
+        if worker_id == "STW1" or worker_id == "STW2":
+            status = ALLOCATED
+        else if allow_repeats: # if you allow repeats focus on current worker/assignment combo
             try:
                 part = Participant.query.\
                     filter(Participant.workerid == worker_id).\
