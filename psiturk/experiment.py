@@ -217,7 +217,7 @@ def check_worker_status():
     assignment_id = request.args['assignmentId']
     allow_repeats = CONFIG.getboolean('HIT Configuration', 'allow_repeats')
 
-    if worker_id == "STW1" or worker_id == "STW2":
+    if worker_id[:3] == "STW":
         resp = {"status": ALLOCATED}
         return jsonify(**resp)
     
