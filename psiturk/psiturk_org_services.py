@@ -39,8 +39,12 @@ class PsiturkOrgServices(object):
 
     def check_credentials(self):
         ''' Check credentials '''
-        req = requests.get(self.api_server + '/api/ad',
-                           auth=(self.access_key, self.secret_key))
+        try:
+            req = requests.get(self.api_server + '/api/ad',
+                               auth=(self.access_key, self.secret_key))
+        except Exception:
+            return False
+
         # Not sure 500 server error should be included here
         if req.status_code in [401, 403, 500]:
             return False
