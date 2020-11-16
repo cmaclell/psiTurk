@@ -397,7 +397,6 @@ def get_ad_via_hitid(hit_id):
 @app.route('/exp', methods=['GET'])
 @nocache
 def start_exp():
-    print("TESTESTSETSETSETSETSETSET")
     """ Serves up the experiment applet. """
     if not (('hitId' in request.args) and ('assignmentId' in request.args) and
             ('workerId' in request.args) and ('mode' in request.args)):
@@ -411,9 +410,6 @@ def start_exp():
         "a": assignment_id,
         "w": worker_id
     })
-    print("++++++++++++++++++++")
-    print(hit_id, assignment_id, worker_id)
-    print("++++++++++++++++++++")
     if hit_id[:5] == "debug":
         debug_mode = True
     else:
